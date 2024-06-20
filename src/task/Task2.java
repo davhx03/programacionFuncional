@@ -1,11 +1,14 @@
 package task;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+
+import static java.lang.Math.round;
 
 public class Task2 {
     /*
-    a) Calcula el número total de libros en la biblioteca.
+
     b) Crea una lista de todos los títulos de los libros. //Map
     c) Verifica si la biblioteca contiene al menos un libro de un autor específico.
     d) Encuentra el libro más barato en la biblioteca.
@@ -20,7 +23,7 @@ public class Task2 {
     public static void main(String[] args) {
         List<Book> books = Arrays.asList(
                 new Book("Book1", "Author1", 1995, "Novel", 19.99),
-                new Book("Book2", "Author2", 2005, "Science Fiction", 29.99),
+                new Book("Book1", "Author2", 2005, "Science Fiction", 29.99),
                 new Book("Book3", "Author3", 1997, "History", 39.99),
                 new Book("Book4", "Author4", 2000, "Novel", 22.99),
                 new Book("Book5", "Author5", 2018, "Science Fiction", 33.99),
@@ -41,6 +44,47 @@ public class Task2 {
                 new Book("Book20", "Author20", 2003, "Science Fiction", 35.99)
         );
         //TODO: Calcular el total de numero total en la biblioteca
+        //Contar los libros que tiene la lista
         Long countBooks = books.stream().count();
+
+       // b) Crea una lista de todos los títulos de los libros. //Map
+
+        List<String> titleList = books.stream()
+                .map(Book::getTitle).collect(Collectors.toList());
+
+        //c) Verifica si la biblioteca contiene al menos un libro de un autor específico.
+        Predicate<Book> verificarAutor = book -> book.getAuthor().equals("Author1");
+        boolean AuthorTieneLibro = books.stream().anyMatch(verificarAutor);
+        System.out.println(AuthorTieneLibro);
+
+        //d) Encuentra el libro más barato en la biblioteca.
+        Comparator<Book> comparadorPrecio = Comparator.comparingDouble(Book::getPrice);
+        Optional<Book> cheapestBook= books.stream().min(comparadorPrecio);
+
+        //e) imprime en consola todos los títulos de libros únicos en la biblioteca
+       List<String> uniqueTitles = books.stream().map(Book::getTitle).distinct().collect(Collectors.toList());
+        System.out.println(uniqueTitles);
+
+        //f) Problema: Crea un Map en el que las claves son los géneros de los libros
+        // y los valores son la cantidad de libros en cada género.
+        // Esto requiere que uses Collectors.groupingBy y Collectors.counting.
+        Map<String, Long> bookProGenre = books.stream().collect(Collectors.groupingBy(Book::getGenre, Collectors.counting()));
+
+        //g) Crear una lista de todos los libros publicados antes del año 2000.
+        List<Book> publishedBefore2000 = books.stream().filter(x-> x.getYear()<2000).collect(Collectors.toList());
+
+        //h) Calcular el precio promedio de los libros de "Ciencia Ficción"
+        double averagePriceFiction = books.stream().mapToDouble(Book::getPrice).average().getAsDouble();
+
+        //i) Crear una lista de todos los libros de "Historia", ordenados por año de publicación, de más reciente a más antiguo.
+        List<Book> historyBooks = books.stream()
+                .filter(x->x.getGenre()
+                        .equals("History"))
+                .sorted(Comparator.comparingInt(Book::getYear))
+                .collect(Collectors.toList());
+
+        //j) Crear un mapa que agrupe los libros por género.
+
+        Map<String,List<Book>> bookByGenre = books.stream().collect(Collectors.groupingBy(Book::getGenre));
     }
 }
