@@ -6,12 +6,15 @@ public class Funcional {
     public static void main(String[] args) {
         //Suplier -> no recibe ningun parametro pero me devuelve un objecto.
         //se utiliza cuando se necesita crear algo.
+
         //(argumentos) -> {el cuerpo de la lambda}
         Supplier<LocalDateTime> time = () -> LocalDateTime.now();
         String localDateTime = time.get().toString();
+
         //Consumer -> Recibe un argumento y no retorna nada.
         Consumer<String>  consumer = (x) -> System.out.println(x);
         consumer.accept(localDateTime);
+
         //Funtion -> me recibe un argumento y me retorna algo!
         Function<String, Integer> funtion = (x) -> x.length();
         Integer size = funtion.apply(localDateTime);
